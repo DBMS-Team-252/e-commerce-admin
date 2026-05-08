@@ -1,0 +1,117 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import PageBreadCrumb from "@/components/common/PageBreadCrumb";
+import { fetchAPI } from "@/lib/api";
+
+export default function OrdersPage() {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadOrders = async () => {
+    try {
+      setLoading(true);
+      const res = await fetchAPI('/orders/admin?limit=50');
+      if (res.success) {
+        setOrders(res.data.data);
+      }
+    } catch (error) {
+      console.error("Lỗi fetch orders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadOrders();
+  }, []);
+
+  const handleUpdateStatus = async (orderId: string, newStatus: string) => {
+    if (!confirm(`Bạn muốn chuyển trạng thái đơn hàng thành ${newStatus}?`)) return;
+    
+    try {
+      await fetchAPI(`/orders/admin/${orderId}/status`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status: newStatus }),
+      });
+      alert("Cập nhật trạng thái thành công!");
+      loadOrders();
+    } catch (error: any) {
+      alert(`Lỗi: ${error.message}`);
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'PENDING': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500';
+      case 'PAID': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500';
+      case 'SHIPPED': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500';
+      case 'CANCELLED': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  return (
+    <div>
+      <PageBreadCrumb pageTitle="Quản lý Đơn hàng" />
+
+      <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03]">
+        <h3 className="mb-6 text-lg font-semibold text-gray-800 dark:text-white/90">
+          Danh sách Đơn hàng
+        </h3>
+
+        {loading ? (
+          <div className="text-center py-10 dark:text-white">Đang tải dữ liệu...</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-left text-sm text-gray-500 dark:text-gray-400">
+              <thead className="bg-gray-50 uppercase text-gray-700 dark:bg-gray-800 dark:text-gray-400">
+                <tr>
+                  <th className="px-6 py-3">Mã ĐH</th>
+                  <th className="px-6 py-3">Khách hàng</th>
+                  <th className="px-6 py-3">Tổng tiền</th>
+                  <th className="px-6 py-3">Trạng thái</th>
+                  <th className="px-6 py-3 text-right">Cập nhật</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((order) => (
+                  <tr key={order.id} className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800/50">
+                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white truncate max-w-[120px]" title={order.id}>
+                      {order.id}
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="font-medium text-gray-900 dark:text-white">{order.customer_name}</p>
+                      <p className="text-xs">{order.customer_email}</p>
+                    </td>
+                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                      {Number(order.total).toLocaleString('vi-VN')} đ
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(order.status)}`}>
+                        {order.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <select 
+                        className="rounded border border-gray-300 p-1 text-sm dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                        value={order.status}
+                        onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
+                        disabled={order.status === 'CANCELLED'}
+                      >
+                        <option value="PENDING">PENDING</option>
+                        <option value="PAID">PAID</option>
+                        <option value="SHIPPED">SHIPPED</option>
+                        <option value="CANCELLED">CANCELLED</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
