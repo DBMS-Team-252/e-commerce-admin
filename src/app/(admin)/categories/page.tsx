@@ -6,7 +6,6 @@ import { fetchAPI } from "@/lib/api";
 import Button from "@/components/ui/button/Button"; 
 import CategoryModal from "@/components/ecommerce/CategoryModal";
 
-// Định nghĩa interface cho dữ liệu danh mục và phân trang theo API
 interface Category {
   id: string;
   name: string;
@@ -25,23 +24,18 @@ export default function CategoriesPage() {
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
   
-  // Quản lý trang hiện tại
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 10; 
 
-  // Trạng thái điều khiển Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
 
-  // Hàm tải dữ liệu từ API
   const loadCategories = async (page: number) => {
     try {
       setLoading(true);
-      // Gửi yêu cầu với tham số page và limit
       const res = await fetchAPI(`/categories?page=${page}&limit=${limit}`);
       
       if (res.success) {
-        // Cập nhật danh sách từ data.data và thông tin trang từ data.pagination
         setCategories(res.data.data);
         setPagination(res.data.pagination);
       }
@@ -52,24 +46,20 @@ export default function CategoriesPage() {
     }
   };
 
-  // Tự động tải lại dữ liệu khi người dùng chuyển trang
   useEffect(() => {
     loadCategories(currentPage);
   }, [currentPage]);
 
-  // Mở modal để thêm mới
   const openAddModal = () => {
     setSelectedCategory(null);
     setIsModalOpen(true);
   };
 
-  // Mở modal để chỉnh sửa danh mục hiện có
   const openEditModal = (category: any) => {
     setSelectedCategory(category);
     setIsModalOpen(true);
   };
 
-  // Xử lý xóa danh mục
   const handleDelete = async (id: string) => {
     if (!confirm("Bạn có chắc chắn muốn xóa danh mục này?")) return;
     try {
@@ -81,7 +71,6 @@ export default function CategoriesPage() {
     }
   };
 
-  // Điều hướng phân trang
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -103,7 +92,6 @@ export default function CategoriesPage() {
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
             Danh sách danh mục
           </h3>
-          {/* Nút trigger mở modal thêm mới */}
           <Button onClick={openAddModal}>+ Thêm Danh Mục</Button>
         </div>
 
@@ -155,7 +143,6 @@ export default function CategoriesPage() {
               </table>
             </div>
 
-            {/* Thanh điều hướng phân trang */}
             {pagination && pagination.totalPages > 0 && (
               <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4 dark:border-gray-800">
                 <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -184,8 +171,6 @@ export default function CategoriesPage() {
           </>
         )}
       </div>
-
-      {/* Component Modal dùng chung cho cả Thêm và Sửa */}
       <CategoryModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

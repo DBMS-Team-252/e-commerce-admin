@@ -12,7 +12,7 @@ interface CategoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  categoryToEdit?: any; // Nếu có dữ liệu là mode Edit
+  categoryToEdit?: any;
 }
 
 export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEdit }: CategoryModalProps) {
@@ -25,7 +25,6 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
 
   useEffect(() => {
     if (isOpen) {
-      // Lấy danh sách danh mục để làm tùy chọn cho "Danh mục cha"
       fetchAPI('/categories?limit=100').then((res) => {
         if (res.success) setCategories(res.data.data);
       });
@@ -53,7 +52,7 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
       
       const payload = {
         name: formData.name,
-        parent_id: formData.parent_id || null, // Nếu không chọn thì gửi null
+        parent_id: formData.parent_id || null,
       };
 
       await fetchAPI(endpoint, {
@@ -98,7 +97,7 @@ export default function CategoryModal({ isOpen, onClose, onSuccess, categoryToEd
             >
               <option value="">-- Không có --</option>
               {categories
-                .filter(cat => cat.id !== categoryToEdit?.id) // Không cho phép chọn chính nó làm cha
+                .filter(cat => cat.id !== categoryToEdit?.id)
                 .map((cat) => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}

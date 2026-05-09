@@ -29,9 +29,8 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
 
   useEffect(() => {
     if (isOpen) {
-      // Sửa URL để lấy nhiều danh mục hơn cho Dropdown và trỏ đúng vào res.data.data
       fetchAPI('/categories?limit=100').then((res) => {
-        if (res.success) setCategories(res.data.data); // FIX Ở ĐÂY NÈ
+        if (res.success) setCategories(res.data.data);
       });
       
       if (productToEdit) {

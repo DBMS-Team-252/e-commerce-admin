@@ -4,8 +4,6 @@ import React, { useEffect, useState } from "react";
 import PageBreadCrumb from "@/components/common/PageBreadCrumb";
 import { fetchAPI } from "@/lib/api";
 import TrashIcon from "@/icons/trash.svg";
-
-// Bổ sung interface Pagination theo chuẩn API
 interface Pagination {
   totalItems: number;
   totalPages: number;
@@ -15,14 +13,12 @@ interface Pagination {
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
-  // Thêm state để quản lý phân trang
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const limit = 10; // Giới hạn 10 đánh giá mỗi trang
+  const limit = 10;
 
   const [loading, setLoading] = useState(true);
 
-  // Cập nhật hàm gọi API để truyền tham số page và limit
   const loadReviews = async (page: number) => {
     try {
       setLoading(true);
@@ -38,7 +34,6 @@ export default function ReviewsPage() {
     }
   };
 
-  // Tự động load dữ liệu mỗi khi người dùng đổi trang
   useEffect(() => {
     loadReviews(currentPage);
   }, [currentPage]);
@@ -48,7 +43,7 @@ export default function ReviewsPage() {
     try {
       await fetchAPI(`/reviews/admin/${id}`, { method: 'DELETE' });
       alert("Xóa đánh giá thành công!");
-      loadReviews(currentPage); // Tải lại trang hiện tại sau khi xóa
+      loadReviews(currentPage);
     } catch (error: any) {
       alert(`Lỗi: ${error.message}`);
     }
@@ -58,7 +53,6 @@ export default function ReviewsPage() {
     return "⭐".repeat(rating) + "☆".repeat(5 - rating);
   };
 
-  // Hàm xử lý nút bấm chuyển trang
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
@@ -126,7 +120,6 @@ export default function ReviewsPage() {
               </table>
             </div>
 
-            {/* Giao diện Pagination (Chỉ hiển thị khi có dữ liệu phân trang) */}
             {pagination && pagination.totalPages > 0 && (
               <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4 dark:border-gray-800">
                 <div className="text-sm text-gray-500 dark:text-gray-400">

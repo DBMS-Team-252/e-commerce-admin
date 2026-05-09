@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import PageBreadCrumb from "@/components/common/PageBreadCrumb";
 import { fetchAPI } from "@/lib/api";
-
-// Bổ sung interface Pagination
 interface Pagination {
   totalItems: number;
   totalPages: number;
@@ -14,14 +12,12 @@ interface Pagination {
 
 export default function UsersPage() {
   const [users, setUsers] = useState<any[]>([]);
-  // Thêm state phân trang
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const limit = 10; // Giới hạn 10 user / trang
+  const limit = 10;
 
   const [loading, setLoading] = useState(true);
 
-  // Cập nhật hàm gọi API để truyền tham số page
   const loadUsers = async (page: number) => {
     try {
       setLoading(true);
@@ -37,7 +33,6 @@ export default function UsersPage() {
     }
   };
 
-  // Tự động load dữ liệu khi đổi trang
   useEffect(() => {
     loadUsers(currentPage);
   }, [currentPage]);
@@ -51,7 +46,7 @@ export default function UsersPage() {
         method: 'PATCH',
         body: JSON.stringify({ role: newRole }),
       });
-      loadUsers(currentPage); // Reload lại trang hiện tại sau khi đổi role
+      loadUsers(currentPage);
     } catch (error: any) {
       alert(`Lỗi: ${error.message}`);
     }
@@ -64,13 +59,12 @@ export default function UsersPage() {
       await fetchAPI(`/users/${userId}/disable`, {
         method: 'PATCH',
       });
-      loadUsers(currentPage); // Reload lại trang hiện tại sau khi khóa
+      loadUsers(currentPage);
     } catch (error: any) {
       alert(`Lỗi: ${error.message}`);
     }
   };
 
-  // Hàm xử lý nút bấm chuyển trang
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
@@ -150,7 +144,6 @@ export default function UsersPage() {
               </table>
             </div>
 
-            {/* Giao diện Pagination */}
             {pagination && pagination.totalPages > 0 && (
               <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4 dark:border-gray-800">
                 <div className="text-sm text-gray-500 dark:text-gray-400">

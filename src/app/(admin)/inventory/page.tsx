@@ -4,8 +4,6 @@ import React, { useEffect, useState } from "react";
 import PageBreadCrumb from "@/components/common/PageBreadCrumb";
 import Button from "@/components/ui/button/Button";
 import { fetchAPI } from "@/lib/api";
-
-// Bổ sung interface Pagination theo chuẩn API
 interface Pagination {
   totalItems: number;
   totalPages: number;
@@ -15,17 +13,15 @@ interface Pagination {
 
 export default function InventoryPage() {
   const [inventory, setInventory] = useState<any[]>([]);
-  // Thêm state để quản lý phân trang
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const limit = 10; // Giới hạn 10 sản phẩm mỗi trang
+  const limit = 10;
 
   const [loading, setLoading] = useState(true);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [importQty, setImportQty] = useState<number>(0);
 
-  // Cập nhật hàm gọi API để nhận tham số page và limit
   const loadInventory = async (page: number) => {
     try {
       setLoading(true);
@@ -41,7 +37,6 @@ export default function InventoryPage() {
     }
   };
 
-  // Tự động load dữ liệu mỗi khi đổi trang
   useEffect(() => {
     loadInventory(currentPage);
   }, [currentPage]);
@@ -62,13 +57,12 @@ export default function InventoryPage() {
       alert("Cập nhật kho thành công!");
       setEditingId(null);
       setImportQty(0);
-      loadInventory(currentPage); // Giữ nguyên trang hiện tại sau khi nhập kho
+      loadInventory(currentPage);
     } catch (error: any) {
       alert(`Lỗi: ${error.message}`);
     }
   };
 
-  // Hàm xử lý điều hướng trang
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
@@ -148,7 +142,6 @@ export default function InventoryPage() {
               </table>
             </div>
 
-            {/* Giao diện Pagination */}
             {pagination && pagination.totalPages > 0 && (
               <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4 dark:border-gray-800">
                 <div className="text-sm text-gray-500 dark:text-gray-400">
