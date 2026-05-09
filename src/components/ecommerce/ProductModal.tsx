@@ -29,8 +29,9 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
 
   useEffect(() => {
     if (isOpen) {
-      fetchAPI('/categories').then((res) => {
-        if (res.success) setCategories(res.data);
+      // Sửa URL để lấy nhiều danh mục hơn cho Dropdown và trỏ đúng vào res.data.data
+      fetchAPI('/categories?limit=100').then((res) => {
+        if (res.success) setCategories(res.data.data); // FIX Ở ĐÂY NÈ
       });
       
       if (productToEdit) {
@@ -107,7 +108,7 @@ export default function ProductModal({ isOpen, onClose, onSuccess, productToEdit
             <div className="flex-1">
               <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Tồn kho</label>
               <input 
-                type="number" required min="0" disabled={!!productToEdit} // API update product không có trường stock, stock quản lý riêng ở API Inventory
+                type="number" required min="0" disabled={!!productToEdit} 
                 className="w-full rounded-lg border border-gray-300 px-4 py-2 dark:border-gray-700 dark:bg-gray-800 dark:text-white disabled:opacity-50"
                 value={formData.stock} onChange={(e) => setFormData({...formData, stock: Number(e.target.value)})}
               />
